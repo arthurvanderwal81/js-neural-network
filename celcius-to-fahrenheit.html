@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <title>Neural Network JS</title>
+        <script type="text/javascript" src="js/canvas-graphics.js"></script>
+        <script type="text/javascript" src="js/neural-network.js"></script>
+
+        <script type="text/javascript">
+            var context = null;
+            var canvasElement = null;
+
+            function celciusToFahrenheit(celcius)
+            {
+                return celcius * 9.0 / 5.0 + 32.0
+            }
+
+            window.addEventListener("load", function() {
+                canvasElement = document.querySelector("canvas");
+                context = canvasElement.getContext("2d");
+
+                let neuralNetwork = new NeuralNetwork(1, 1, 1, 1);
+                neuralNetwork.randomizeWeights(-1, 1);
+
+                console.log(neuralNetwork);
+
+                console.log(neuralNetwork.getWeights());
+
+                neuralNetwork.draw(context, 50, 100);
+
+                let testData = [10, 20, 30, 40];
+                let desiredOutput = [1, 0, 0, 0];
+                /*
+                let desiredOutput = [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ];
+
+                let testData = desiredOutput;
+                */
+
+                for (let epoch = 0; epoch < 100; epoch++)
+                {
+                    for (let i = 0; i < testData.length; i++)
+                    {
+                        let output = neuralNetwork.feedforward([testData[i]]);
+                        //let desiredOutput = celciusToFahrenheit(testData[i]);
+
+                        let accuracy = 0.0;
+
+                        accuracy += desiredOutput[i] - output[0];
+
+                        // this number should get smaller over time
+                        console.log("accuracy: " + accuracy);
+
+                        neuralNetwork.backpropagate([output], [desiredOutput[i]]);
+
+                        //console.log("Output: " + output);
+                        //console.log("Expected Output: " + expectedOutput);
+                        //console.log("MSE: " + NeuralNetwork.MeanSquaredError(output, expectedOutput));
+                        //break;
+                    }
+                }
+            });
+        </script>
+    </head>
+
+    <body>
+        <canvas width="1920" height="1080" />
+    </body>
+</html>
